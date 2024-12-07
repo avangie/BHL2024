@@ -99,8 +99,8 @@ def main():
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    new_message_image = "assets/7proj.jpg"
-    update_message(session, 7, new_message_image)
+    new_message_image = "assets/1presentation.jpg"
+    update_message(session, 1, new_message_image)
     get_all_messages(session)
 
 if __name__ == "__main__":
