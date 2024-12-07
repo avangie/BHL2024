@@ -9,11 +9,11 @@ Base = declarative_base()
 class Message(Base):
     __tablename__ = 'messages'
 
-    id = Column(Integer, primary_key=True)
-    date = Column(DateTime, default=datetime.datetime.utcnow)
-    sender = Column(String(100))
-    text = Column(Text)
-    image = Column(LargeBinary)
+    id = Column(Integer, primary_key=True)  # Klucz główny
+    date = Column(DateTime, default=datetime.datetime.utcnow)  # Data wiadomości
+    sender = Column(String(100))  # Nadawca
+    text = Column(Text)  # Tekst wiadomości
+    image = Column(String(200))  # Ścieżka do obrazu (zmiana z LargeBinary)
 
     def __init__(self, sender, text, date=None, image=None):
         if date is None:
@@ -24,10 +24,11 @@ class Message(Base):
         self.image = image
 
     def __repr__(self):
-        return f"<Message(id={self.id}, sender={self.sender}, date={self.date}, text={self.text[:20]})>"
+        return f"<Message(id={self.id}, sender={self.sender}, date={self.date}, text={self.text[:20]}, image={self.image})>"
+
 
 def create_db():
-    engine = create_engine('sqlite:///messages.db', echo=True)
+    engine = create_engine('sqlite:///new_messages.db', echo=True)
     Base.metadata.create_all(engine)
     return engine
 
@@ -84,13 +85,22 @@ def generate_and_add_messages(session):
         text = generate_message(sender, date)
         add_message(session, sender, text, date)
 
+def update_message(session, message_id, new_image):
+    message = session.query(Message).filter(Message.id == message_id).first()
+    if message:
+        message.image = new_image
+        session.commit()
+        print(f"Message with id {message_id} has been updated.")
+    else:
+        print(f"Message with id {message_id} not found.")
+
 def main():
     engine = create_db()
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    generate_and_add_messages(session)
-
+    new_message_image = "assets/7proj.jpg"
+    update_message(session, 7, new_message_image)
     get_all_messages(session)
 
 if __name__ == "__main__":
