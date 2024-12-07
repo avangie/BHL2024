@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Query
 from typing import Dict, List, Optional
+from datetime import date
 
 # Create an instance of the FastAPI application
 app = FastAPI()
@@ -39,6 +40,16 @@ def get_example_data(
     get_top: Optional[int] = Query(None, description="Number of top items to return"),
 ):
     filtered_items = example_data["items"]
+    x = None
+    y = None
+    try:
+        x = date.fromisoformat(from_time)
+    except:
+        pass
+    try:
+        y = date.fromisoformat(to_time)
+    except:
+        pass
 
     if tags:
         filtered_items = [item for item in filtered_items if item["name"] in tags]
@@ -50,6 +61,8 @@ def get_example_data(
         "filtered_items": filtered_items,
         "from_time": from_time,
         "to_time": to_time,
+        "x": x.strftime("%Y-%m-%d-%H-%M") if x else None,
+        "y": y,
     }
     return response
 

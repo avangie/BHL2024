@@ -1,0 +1,5 @@
+aby uruchomic api komenda:
+fastapi dev api.py
+
+mozna zobaczyc w przegladarce:
+http://localhost:8000/docs
