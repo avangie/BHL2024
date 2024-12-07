@@ -20,13 +20,19 @@ def get_data_from_gpt(
     )
 
     response = client.chat.completions.create(
-        model="gpt3.5-turbo", messages=[{"role": "user", "content": prompt}]
+        model="gpt-3.5-turbo", messages=[{"role": "user", "content": prompt}]
     )
 
     logger.info(f"Got response from GPT-3: {response}")
 
     flag = False
     for i in range(10):
+        try:
+            d = json.loads(response.choices[0].message.content[i:])
+            flag = True
+            break
+        except:
+            pass
         for j in range(-1, -10, -1):
             try:
                 d = json.loads(response.choices[0].message.content[i:j])
