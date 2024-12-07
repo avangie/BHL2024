@@ -14,7 +14,7 @@ class Pocztowka:
     title: str = ""
     message: str = ""
     time: str = ""
-    files: list[str] = field(default_factory=lambda: [])
+    file: str = ""
 
 
 TAGS = ["family", "Earth", "Poland", "Europe"]
