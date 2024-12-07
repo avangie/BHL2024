@@ -2,7 +2,7 @@ export default function Postcard() {
     const author: string = "Author";
     const recipient: string = "Recipient";
     const message: string = "Message";
-    const image = "https://placehold.co/800x700";
+    const image = "https://placehold.co/1080x720";
     const date: string = "2021-01-01";
     
     return (
@@ -14,8 +14,8 @@ export default function Postcard() {
             padding: '20px', 
             color: 'white', 
             textShadow: '2px 2px 4px black', 
-            height: '700px', // Set constant height
-            width: '800px', // Set constant width to match image size
+            height: '720px', // Set constant height
+            width: '1080px', // Set constant width to match image size
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
