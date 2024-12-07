@@ -2,15 +2,12 @@ services:
    front:
      build:
        context: ./front
-       target: dev
      environment:
        NODE_ENV: production
      ports:
        - 3000:3000
      depends_on:
        - backend
-     volumes:
-      - ./front:/usr/src/app
 
    backend:
      build:

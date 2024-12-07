@@ -4,20 +4,6 @@ FROM node:${NODE_VERSION}-alpine as base
 WORKDIR /usr/src/app
 EXPOSE 3000
 
-FROM base as dev
-
-# Download additional development dependencies before building, as some projects require
-# "devDependencies" to be installed to build. If you don't need this, remove this step.
-RUN --mount=type=bind,source=package.json,target=package.json \
-    --mount=type=bind,source=yarn.lock,target=yarn.lock \
-    --mount=type=cache,target=/root/.yarn \
-    yarn install --frozen-lockfile
-
-
-COPY package.json .
-
-CMD yarn dev
-
 # Create a stage for installing production dependecies.
 FROM base as deps
 
