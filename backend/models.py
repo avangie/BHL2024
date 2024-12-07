@@ -1,11 +1,11 @@
-from dataclasses import dataclass, field
-
-from backend.database import Base
+from dataclasses import dataclass
+from sqlalchemy import create_engine, Column, DateTime, Integer, String, Text
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 import datetime
 
-from sqlalchemy import Column, DateTime, Integer, String, Text
-from sqlalchemy import create_engine
-
+# Definicja bazy
+Base = declarative_base()
 
 @dataclass
 class Pocztowka:
@@ -16,19 +16,17 @@ class Pocztowka:
     time: str = ""
     file: str = ""
 
-
 TAGS = ["family", "Earth", "Poland", "Europe"]
 SORT_BY = ["time_asc", "time_desc"]
-
 
 class Message(Base):
     __tablename__ = "messages"
 
-    id = Column(Integer, primary_key=True)  # Klucz główny
-    date = Column(DateTime, default=datetime.datetime.utcnow)  # Data wiadomości
-    sender = Column(String(100))  # Nadawca
-    text = Column(Text)  # Tekst wiadomości
-    image = Column(String(200))  # Ścieżka do obrazu (zmiana z LargeBinary)
+    id = Column(Integer, primary_key=True)
+    date = Column(DateTime, default=datetime.datetime.utcnow)
+    sender = Column(String(100))
+    text = Column(Text)
+    image = Column(String(200))
 
     def __init__(self, sender, text, date=None, image=None):
         if date is None:
@@ -40,24 +38,6 @@ class Message(Base):
 
     def __repr__(self):
         return f"<Message(id={self.id}, sender={self.sender}, date={self.date}, text={self.text[:20]}, image={self.image})>"
-
-
-def message_to_pocztowka(message: Message) -> Pocztowka:
-    return Pocztowka(
-        author=message.sender,
-        message=message.text,
-        time=message.date,
-        files=[message.image],
-    )
-
-
-def pocztowka_to_message(pocztowka: Pocztowka) -> Message:
-    return Message(
-        sender=pocztowka.author,
-        text=pocztowka.message,
-        date=pocztowka.time,
-        image=pocztowka.files[0],
-    )
 
 
 def get_session():
@@ -73,3 +53,58 @@ def add_message(session, sender, text, date, image=None):
     session.add(message)
     session.commit()
     print(f"Message from {sender} added at {message.date}")
+
+
+def add_message_from_input(sender, text, image=None):
+    session = get_session()
+    date = datetime.datetime.utcnow()
+    add_message(session, sender, text, date, image)
+    session.close()
+
+
+def message_to_pocztowka(message: Message) -> Pocztowka:
+    return Pocztowka(
+        author=message.sender,
+        message=message.text,
+        time=message.date,
+        file=message.image,
+    )
+
+
+def pocztowka_to_message(pocztowka: Pocztowka) -> Message:
+    return Message(
+        sender=pocztowka.author,
+        text=pocztowka.message,
+        date=pocztowka.time,
+        image=pocztowka.file,
+    )
+
+def get_all_messages_from_db():
+    session = get_session()
+
+    messages = session.query(Message).all()
+
+    session.close()
+
+    return [
+        {
+            "id": msg.id,
+            "date": msg.date,
+            "sender": msg.sender,
+            "text": msg.text,
+            "image": msg.image
+        }
+        for msg in messages
+    ]
+
+#Przykładowe użycie
+# if __name__ == "__main__":
+#     # Dodajemy wiadomość
+#     #add_message_from_input("John", "This is a test message", "assets/images/test.jpg")
+    
+#     # Pobieramy wszystkie wiadomości z bazy danych
+#     messages = get_all_messages_from_db()
+    
+#     # Wyświetlamy wiadomości
+#     for msg in messages:
+#         print(msg)
