@@ -1,11 +1,11 @@
 from dataclasses import dataclass
-from sqlalchemy import create_engine, Column, DateTime, Integer, String, Text
+from sqlalchemy import Column, DateTime, Integer, String, Text, create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 import datetime
 
-# Definicja bazy
 Base = declarative_base()
+
 
 @dataclass
 class Pocztowka:
@@ -16,8 +16,10 @@ class Pocztowka:
     time: str = ""
     file: str = ""
 
+
 TAGS = ["family", "Earth", "Poland", "Europe"]
 SORT_BY = ["time_asc", "time_desc"]
+
 
 class Message(Base):
     __tablename__ = "messages"
@@ -79,6 +81,7 @@ def pocztowka_to_message(pocztowka: Pocztowka) -> Message:
         image=pocztowka.file,
     )
 
+
 def get_all_messages_from_db():
     session = get_session()
 
@@ -92,19 +95,20 @@ def get_all_messages_from_db():
             "date": msg.date,
             "sender": msg.sender,
             "text": msg.text,
-            "image": msg.image
+            "image": msg.image,
         }
         for msg in messages
     ]
 
-#Przykładowe użycie
+
+# Przykładowe użycie
 # if __name__ == "__main__":
 #     # Dodajemy wiadomość
 #     #add_message_from_input("John", "This is a test message", "assets/images/test.jpg")
-    
+
 #     # Pobieramy wszystkie wiadomości z bazy danych
 #     messages = get_all_messages_from_db()
-    
+
 #     # Wyświetlamy wiadomości
 #     for msg in messages:
 #         print(msg)
