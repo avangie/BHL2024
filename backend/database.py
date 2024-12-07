@@ -4,9 +4,9 @@ from sqlalchemy.orm import sessionmaker
 import datetime
 import random
 
-from models import Message
-
 Base = declarative_base()
+
+from models import Message
 
 
 def create_db():

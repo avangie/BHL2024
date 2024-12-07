@@ -1,9 +1,7 @@
 from fastapi import FastAPI, Query
 from datetime import date
 from dateutil.relativedelta import relativedelta
-from backend.models import TAGS, Message, Pocztowka
-from database import get_all_messages, add_message
-
+from models import add_message, get_session, TAGS, Pocztowka, get_all_pocztowki_from_db
 
 app = FastAPI()
 
@@ -11,66 +9,36 @@ app = FastAPI()
 def get_data_from_db(
     from_time: date,
     to_time: date,
-    tags: list[str],
     get_top: int,
+    sort_by: str,
 ) -> list[Pocztowka]:
-
-    messages: list[Message] = get_all_messages()
-    messages = [
-        message
-        for message in messages
-        if message.date >= from_time and message.date <= to_time
-    ]
-    pocztowki = [
-        Pocztowka(
-            author=message.sender,
-            message=message.text,
-            time=message.date,
-            files=[message.image],
-        )
-        for message in messages
-    ]
+    pocztowki: list[Pocztowka] = get_all_pocztowki_from_db()
     pocztowki = [
         pocztowka
         for pocztowka in pocztowki
         if pocztowka.time >= from_time and pocztowka.time <= to_time
     ]
-
-    return [
-        Pocztowka(
-            author="author",
-            # recipient="recipient",
-            title="title",
-            message="message",
-            time="time",
-            files=["file1", "file2"],
-        ),
-        Pocztowka(
-            author="author2",
-            # recipient="recipient2",
-            title="title2",
-            message="message2",
-            time="time2",
-            files=["file3", "file4"],
-        ),
-    ]
+    if sort_by == "time_asc":
+        pocztowki.sort(key=lambda x: x.time)
+    else:
+        pocztowki.sort(key=lambda x: x.time, reverse=True)
+    return pocztowki[:get_top]
 
 
-def get_data_from_gpt(
-    from_time: date,
-    to_time: date,
-    tags: list[str],
-    get_top: int,
-) -> list[Pocztowka]:
-    prompt = (
-        f'Chcę zobaczyć {get_top} najważniejszych informacji z przedziału czasowego od {from_time} do {to_time} na temat {", ".join(tags)}.'
-        + "Chciałbym te dane otrzymać w formacie JSON w następującej strukturze: jest to lista obiektów, gdzie każdy obiekt zawiera pola: "
-        + '"title": string, "message": string, "time": string".'
-    )
-    return [Pocztowka()]
+# def get_data_from_gpt(
+#    from_time: date,
+#    to_time: date,
+#    tags: list[str],
+#    get_top: int,
+# ) -> list[Pocztowka]:
+#    prompt = (
+#        f'Chcę zobaczyć {get_top} najważniejszych informacji z przedziału czasowego od {from_time} do {to_time} na temat {", ".join(tags)}.'
+#        + "Chciałbym te dane otrzymać w formacie JSON w następującej strukturze: jest to lista obiektów, gdzie każdy obiekt zawiera pola: "
+#        + '"title": string, "message": string, "time": string".'
+#    )
+#    return [Pocztowka()]
 
 
-# Define a GET endpoint
 @app.get("/data", response_model=list[Pocztowka])
 def get_example_data(
     from_time: str | None = Query(None, description="Start time in ISO format"),
@@ -82,8 +50,6 @@ def get_example_data(
     print(
         f"dostalem zapytanie z parametrami: from_time={from_time}, to_time={to_time}, tags={tags}, get_top={get_top}"
     )
-    parsed_from_time = None
-    parsed_to_time = None
     parsed_from_time = (
         date.fromisoformat(from_time)
         if from_time
@@ -92,17 +58,30 @@ def get_example_data(
     parsed_to_time = date.fromisoformat(to_time) if to_time else date.today()
     parsed_tags = [tag for tag in tags if tag in TAGS] if tags else []
     parsed_get_top = get_top if get_top else 10
+    parsed_sort_by = sort_by if sort_by else "time_desc"
 
     print(
         f"przeparsowalem do: from_time={parsed_from_time}, to_time={parsed_to_time}, tags={parsed_tags}, get_top={parsed_get_top}"
     )
 
     pocztowki = get_data_from_db(
-        parsed_from_time, parsed_to_time, parsed_tags, parsed_get_top
+        parsed_from_time, parsed_to_time, parsed_get_top, parsed_sort_by
     )
+
+    print(f"wysylam odpowiedz: {pocztowki}")
 
     response = [p.__dict__ for p in pocztowki]
     return response
 
 
-# To run the server, use: `uvicorn filename:app --reload` (replace `filename` with the name of this file)
+@app.post("/upload")
+async def upload_file(pocztowka: Pocztowka):
+    print(f"Otrzymałem pocztówkę: {pocztowka}")
+    session = get_session()
+    add_message(
+        session,
+        pocztowka.author,
+        pocztowka.message,
+        str(pocztowka.time),
+        pocztowka.file,
+    )

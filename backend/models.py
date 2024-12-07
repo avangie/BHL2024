@@ -1,11 +1,12 @@
 from dataclasses import dataclass
-from sqlalchemy import create_engine, Column, DateTime, Integer, String, Text
+from sqlalchemy import Column, DateTime, Integer, String, Text, create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 import datetime
+from datetime import date
 
-# Definicja bazy
 Base = declarative_base()
+
 
 @dataclass
 class Pocztowka:
@@ -13,11 +14,13 @@ class Pocztowka:
     recipient: str = ""
     title: str = ""
     message: str = ""
-    time: str = ""
+    time: date = date.today()
     file: str = ""
+
 
 TAGS = ["family", "Earth", "Poland", "Europe"]
 SORT_BY = ["time_asc", "time_desc"]
+
 
 class Message(Base):
     __tablename__ = "messages"
@@ -69,7 +72,7 @@ def message_to_pocztowka(message: Message) -> Pocztowka:
     return Pocztowka(
         author=message.sender,
         message=message.text,
-        time=message.date,
+        time=date.fromisoformat(message.date),
         file=message.image,
     )
 
@@ -81,6 +84,7 @@ def pocztowka_to_message(pocztowka: Pocztowka) -> Message:
         date=pocztowka.time,
         image=pocztowka.file,
     )
+
 
 def get_all_messages_from_db():
     session = get_session()
@@ -95,19 +99,30 @@ def get_all_messages_from_db():
             "date": msg.date,
             "sender": msg.sender,
             "text": msg.text,
-            "image": msg.image
+            "image": msg.image,
         }
         for msg in messages
     ]
 
-#Przykładowe użycie
+
+def get_all_pocztowki_from_db():
+    session = get_session()
+
+    messages = session.query(Message).all()
+
+    session.close()
+
+    return [message_to_pocztowka(msg) for msg in messages]
+
+
+# Przykładowe użycie
 # if __name__ == "__main__":
 #     # Dodajemy wiadomość
 #     #add_message_from_input("John", "This is a test message", "assets/images/test.jpg")
-    
+
 #     # Pobieramy wszystkie wiadomości z bazy danych
 #     messages = get_all_messages_from_db()
-    
+
 #     # Wyświetlamy wiadomości
 #     for msg in messages:
 #         print(msg)
