@@ -3,6 +3,7 @@ from sqlalchemy import Column, DateTime, Integer, String, Text, create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 import datetime
+from datetime import date
 
 Base = declarative_base()
 
@@ -13,7 +14,7 @@ class Pocztowka:
     recipient: str = ""
     title: str = ""
     message: str = ""
-    time: str = ""
+    time: date = date.today()
     file: str = ""
 
 
@@ -68,7 +69,7 @@ def message_to_pocztowka(message: Message) -> Pocztowka:
     return Pocztowka(
         author=message.sender,
         message=message.text,
-        time=message.date,
+        time=date.fromisoformat(message.date),
         file=message.image,
     )
 
@@ -99,6 +100,16 @@ def get_all_messages_from_db():
         }
         for msg in messages
     ]
+
+
+def get_all_pocztowki_from_db():
+    session = get_session()
+
+    messages = session.query(Message).all()
+
+    session.close()
+
+    return [message_to_pocztowka(msg) for msg in messages]
 
 
 # Przykładowe użycie
