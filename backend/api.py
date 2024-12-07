@@ -3,8 +3,17 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 from models import add_message, get_session, Pocztowka, get_all_pocztowki_from_db
 from openaisiema import get_data_from_gpt
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Zmień na odpowiednią domenę, np. frontend na porcie 3000
+    allow_credentials=True,
+    allow_methods=["*"],  # Umożliwia wszystkie metody, takie jak GET, POST, PUT, DELETE
+    allow_headers=["*"],  # Zezwalaj na wszystkie nagłówki
+)
 
 
 def get_data_from_db(
