@@ -13,18 +13,27 @@ export default function Postcard() {
             backgroundRepeat: 'no-repeat', 
             padding: '20px', 
             color: 'white', 
-            textShadow: '1px 1px 2px black',
-            height: '100vh',
+            textShadow: '2px 2px 4px black', 
+            height: '700px', // Set constant height
+            width: '800px', // Set constant width to match image size
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
             position: 'relative'
         }}>
-            <p style={{ position: 'absolute', top: '20px', left: '20px' }}><strong>To:</strong> {recipient}</p>
-            <p style={{ position: 'absolute', top: '20px', right: '20px' }}><strong>From:</strong> {author}</p>
-            <p style={{ textAlign: 'center' }}>{message}</p>
-            <p style={{ position: 'absolute', bottom: '20px' }}><em>{date}</em></p>
+            <div style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 1 }}>
+                <p style={{ color: 'white', textShadow: '2px 2px 4px black' }}>{recipient}</p>
+            </div>
+            <div style={{ position: 'absolute', top: '20px', right: '20px', zIndex: 1 }}>
+                <p style={{ color: 'white', textShadow: '2px 2px 4px black' }}>{author}</p>
+            </div>
+            <div style={{ textAlign: 'center', zIndex: 1 }}>
+                <p style={{ color: 'white', textShadow: '2px 2px 4px black' }}>{message}</p>
+            </div>
+            <div style={{ position: 'absolute', bottom: '20px', zIndex: 1 }}>
+                <p style={{ color: 'white', textShadow: '2px 2px 4px black' }}><em>{date}</em></p>
+            </div>
         </div>
     )
 }

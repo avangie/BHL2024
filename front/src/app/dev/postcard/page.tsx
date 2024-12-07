@@ -2,7 +2,12 @@ import Postcard from "@/components/postcard/Postcard";
 
 export default function PostcardPage() {
     return (
-        <div className="w-1/2">
+        <div style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            height: '100vh' 
+        }}>
             <Postcard />
         </div>
     )
