@@ -15,7 +15,7 @@ import {
 import { TimelineElement } from "@/app/data";
 
 interface TimelineLayoutProps {
-    items: TimelineElement[]; // Replace any[] with the actual type of items.
+    items: TimelineElement[];
 }
 export const TimelineLayout = ({ items }: TimelineLayoutProps) => {
     return (

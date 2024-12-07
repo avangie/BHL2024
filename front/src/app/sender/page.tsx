@@ -1,22 +1,10 @@
 "use client"
-import {
-  JSX,
-  SVGProps,
-  useState
-} from "react"
-import {
-  toast
-} from "sonner"
-import {
-  useForm
-} from "react-hook-form"
-import {
-  zodResolver
-} from "@hookform/resolvers/zod"
-import * as z from "zod"
-import {
-  Button
-} from "@/components/ui/button"
+import { JSX, SVGProps, useState } from "react";
+import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -24,23 +12,22 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import {
-  Input
-} from "@/components/ui/input"
-import { Card, CardContent } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import Link from "next/link";
+import Header from "@/components/Header";
 
 const formSchema = z.object({
   authorField: z.string(),
   recipientField: z.string(),
   titleField: z.string(),
   messageField: z.string(),
-  fileInput: z.string().optional()
+  fileInput: z.string().optional(),
 });
 
 export default function SenderForm() {
-
   const [files, setFiles] = useState<File[]>([]);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -50,7 +37,7 @@ export default function SenderForm() {
       recipientField: "",
       titleField: "",
       messageField: "",
-    }
+    },
   });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,13 +78,13 @@ export default function SenderForm() {
         <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
         <path d="M14 2v4a2 2 0 0 0 2 2h4" />
       </svg>
-    )
+    );
   }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 max-w-3xl mx-auto py-10">
-
+        <Header />
         <FormField
           control={form.control}
           name="authorField"
@@ -105,12 +92,8 @@ export default function SenderForm() {
             <FormItem>
               <FormLabel>Author</FormLabel>
               <FormControl>
-                <Input
-                  placeholder=""
-                  type=""
-                  {...field} />
+                <Input placeholder="" {...field} />
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
@@ -123,12 +106,8 @@ export default function SenderForm() {
             <FormItem>
               <FormLabel>Recipient</FormLabel>
               <FormControl>
-                <Input
-                  placeholder=""
-                  type=""
-                  {...field} />
+                <Input placeholder="" {...field} />
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
@@ -141,12 +120,8 @@ export default function SenderForm() {
             <FormItem>
               <FormLabel>Title</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Type the title of your message here..."
-                  type=""
-                  {...field} />
+                <Input placeholder="Type the title of your message here..." {...field} />
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
@@ -159,12 +134,8 @@ export default function SenderForm() {
             <FormItem>
               <FormLabel>Message</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Type your message here..."
-                  type=""
-                  {...field} />
+                <Input placeholder="Type your message here..." {...field} />
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
@@ -178,13 +149,10 @@ export default function SenderForm() {
               <span className="text-xs text-gray-500">PDF, image, video, or audio</span>
             </div>
             <div className="space-y-2 text-sm">
-              <Label htmlFor="file" className="text-sm font-medium">
-                File
-              </Label>
+              <Label htmlFor="file" className="text-sm font-medium">File</Label>
               <Input
                 id="file"
                 type="file"
-                placeholder="File"
                 accept="image/*"
                 multiple
                 onChange={handleFileChange}
@@ -203,5 +171,5 @@ export default function SenderForm() {
         <Button type="submit">Submit</Button>
       </form>
     </Form>
-  )
+  );
 }
