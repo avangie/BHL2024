@@ -73,9 +73,11 @@ def generate_message(sender, date):
 def generate_random_date():
     end_date = datetime.datetime.now()
     start_date = end_date - datetime.timedelta(days=270)
+    random_seconds = random.randint(0, int((end_date - start_date).total_seconds()))
+    random_date = start_date + datetime.timedelta(seconds=random_seconds)
 
-    random_date = start_date + (end_date - start_date) * random.random()
-    return random_date
+    return random_date.strftime('%Y-%m-%d %H:%M:%S')
+
 
 
 def generate_and_add_messages(session):
@@ -89,7 +91,7 @@ def generate_and_add_messages(session):
 def update_message(session, message_id, new_image):
     message = session.query(Message).filter(Message.id == message_id).first()
     if message:
-        message.image = new_image
+        message.date_str = new_image
         session.commit()
         print(f"Message with id {message_id} has been updated.")
     else:
@@ -101,8 +103,9 @@ def main():
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    new_message_image = "assets/1presentation.jpg"
-    update_message(session, 1, new_message_image)
+    for i in range(1,21):
+        new_message_image = generate_random_date()
+        update_message(session, i, new_message_image)
     get_all_messages(session)
 
 

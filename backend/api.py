@@ -1,8 +1,7 @@
 from fastapi import FastAPI, Query
 from datetime import date
 from dateutil.relativedelta import relativedelta
-from models import add_message, get_session, TAGS, SORT_BY, Pocztowka
-
+from models import add_message, get_session, TAGS, Pocztowka, get_all_pocztowki_from_db
 
 app = FastAPI()
 
@@ -13,7 +12,7 @@ def get_data_from_db(
     get_top: int,
     sort_by: str,
 ) -> list[Pocztowka]:
-    pocztowki: list[Pocztowka] = get_all_pocztowki()
+    pocztowki: list[Pocztowka] = get_all_pocztowki_from_db()
     pocztowki = [
         pocztowka
         for pocztowka in pocztowki
@@ -69,6 +68,8 @@ def get_example_data(
         parsed_from_time, parsed_to_time, parsed_get_top, parsed_sort_by
     )
 
+    print(f"wysylam odpowiedz: {pocztowki}")
+
     response = [p.__dict__ for p in pocztowki]
     return response
 
@@ -76,7 +77,11 @@ def get_example_data(
 @app.post("/upload")
 async def upload_file(pocztowka: Pocztowka):
     print(f"Otrzymałem pocztówkę: {pocztowka}")
-    # session = get_session()
-    # add_message(
-    #    session, pocztowka.author, pocztowka.message, pocztowka.time, pocztowka.file
-    # )
+    session = get_session()
+    add_message(
+        session,
+        pocztowka.author,
+        pocztowka.message,
+        str(pocztowka.time),
+        pocztowka.file,
+    )
