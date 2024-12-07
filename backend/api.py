@@ -31,6 +31,9 @@ def get_data_from_gpt(
     )
 
 
+TAGS = ["rodzina", "Ziemia", "Polska"]
+
+
 # Define a GET endpoint
 @app.get("/data", response_model=Dict)
 def get_example_data(
@@ -39,6 +42,26 @@ def get_example_data(
     tags: Optional[List[str]] = Query(None, description="List of tags to filter items"),
     get_top: Optional[int] = Query(None, description="Number of top items to return"),
 ):
+    print(
+        f"dostalem zapytanie z parametrami: from_time={from_time}, to_time={to_time}, tags={tags}, get_top={get_top}"
+    )
+    parsed_from_time = None
+    parsed_to_time = None
+    try:
+        parsed_from_time = date.fromisoformat(from_time)
+    except:
+        pass
+    try:
+        parsed_to_time = date.fromisoformat(to_time)
+    except:
+        pass
+    parsed_tags = [tag for tag in tags if tag in TAGS] if tags else []
+    parsed_get_top = get_top if get_top else 10
+
+    print(
+        f"przeparsowalem do: from_time={parsed_from_time}, to_time={parsed_to_time}, tags={parsed_tags}, get_top={parsed_get_top}"
+    )
+
     filtered_items = example_data["items"]
     x = None
     y = None
