@@ -1,22 +1,23 @@
 # syntax=docker/dockerfile:1
-
-# Comments are provided throughout this file to help you get started.
-# If you need more help, visit the Dockerfile reference guide at
-# https://docs.docker.com/go/dockerfile-reference/
-
-# Want to help us make this template better? Share your feedback here: https://forms.gle/ybq9Krt8jtBL3iCk7
-
 ARG NODE_VERSION=22.3.0
-
-################################################################################
-# Use node image for base image for all stages.
 FROM node:${NODE_VERSION}-alpine as base
-
-# Set working directory for all build stages.
 WORKDIR /usr/src/app
+EXPOSE 3000
+
+FROM base as dev
+
+# Download additional development dependencies before building, as some projects require
+# "devDependencies" to be installed to build. If you don't need this, remove this step.
+RUN --mount=type=bind,source=package.json,target=package.json \
+    --mount=type=bind,source=yarn.lock,target=yarn.lock \
+    --mount=type=cache,target=/root/.yarn \
+    yarn install --frozen-lockfile
 
 
-################################################################################
+COPY package.json .
+
+CMD yarn dev
+
 # Create a stage for installing production dependecies.
 FROM base as deps
 
@@ -33,12 +34,6 @@ RUN --mount=type=bind,source=package.json,target=package.json \
 # Create a stage for building the application.
 FROM deps as build
 
-# Download additional development dependencies before building, as some projects require
-# "devDependencies" to be installed to build. If you don't need this, remove this step.
-RUN --mount=type=bind,source=package.json,target=package.json \
-    --mount=type=bind,source=yarn.lock,target=yarn.lock \
-    --mount=type=cache,target=/root/.yarn \
-    yarn install --frozen-lockfile
 
 # Copy the rest of the source files into the image.
 COPY . .
@@ -65,9 +60,7 @@ COPY --from=deps /usr/src/app/node_modules ./node_modules
 COPY --from=build /usr/src/app/.next ./.next
 COPY --from=build /usr/src/app/public ./public
 
-
 # Expose the port that the application listens on.
-EXPOSE 3000
 
 # Run the application.
 CMD yarn start
