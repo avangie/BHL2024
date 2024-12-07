@@ -23,10 +23,11 @@ class Message(Base):
     __tablename__ = "messages"
 
     id = Column(Integer, primary_key=True)
-    date = Column(DateTime, default=datetime.datetime.utcnow)
+    date = Column(String(100)) 
     sender = Column(String(100))
     text = Column(Text)
     image = Column(String(200))
+    date_str = Column(String(100))  
 
     def __init__(self, sender, text, date=None, image=None):
         if date is None:
@@ -49,10 +50,12 @@ def get_session():
 
 
 def add_message(session, sender, text, date, image=None):
-    message = Message(sender=sender, text=text, date=date, image=image)
+    date_str = date.strftime("%Y-%m-%d %H:%M:%S")  
+    message = Message(sender=sender, text=text, date=date_str, image=image)
     session.add(message)
     session.commit()
-    print(f"Message from {sender} added at {message.date}")
+    print(f"Message from {sender} added at {date_str}")
+
 
 
 def add_message_from_input(sender, text, image=None):
