@@ -1,40 +1,57 @@
-import { Separator } from "@radix-ui/react-separator";
-import Image from "next/image";
-import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
-export default function Home() {
+export default function HeroSectionImageWithReviews() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <h1 className="text-4xl font-bold text-center sm:text-left">
-          Last nine months
-        </h1>
-        <h2 className="text-2xl text-center sm:text-left">
-          Who are you?
-        </h2>
-        <ul className="flex flex-col gap-4 items-center sm:items-start">
-          <li><Link href='/sender'>I'm a family member</Link></li>
-          <li><Link href='/addressee'>I'm the addressee</Link></li>
-        </ul>
-        <Separator className='my-4'/>
-        <h2 className="text-2xl text-center sm:text-left">
-          FAQ
-        </h2>
-        <ul className="flex flex-col gap-4 items-center sm:items-start">
-          <li><Link href='/faq'>How does this work?</Link></li>
-          <li>
-            <ul className="flex flex-col gap-4 items-center sm:items-start">
-              <li>- If you are a family member you can leave a postcard for the isolated person</li>
-              <li>- If you were the isolated person you can catch up on all you've missed</li>
-            </ul>
-          </li>
-        </ul>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <p>
-          <a href="https://github.com/avangie/BHL2024">Project Repo</a>
-        </p>
-      </footer>
-    </div>
+    <>
+      {/* Hero */}
+      <div className="p-24 lg:py-32">
+        {/* Grid */}
+        <div className="grid md:grid-cols-2 gap-4 md:gap-8 xl:gap-20 md:items-center">
+          <div>
+            <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+              CloudMaster: Elevate Your Projects
+            </h1>
+            <p className="mt-3 text-xl text-muted-foreground">
+              Simplify team collaboration with CloudMaster, the ultimate tool
+              for efficient project management.
+            </p>
+            {/* Buttons */}
+            <div className="mt-7 grid gap-3 w-full sm:inline-flex">
+              <Button size={"lg"}>Watch the
+
+              </Button>
+              <Button variant={"outline"} size={"lg"}>
+                I'm 
+              </Button>
+            </div>
+            {/* End Buttons */}
+            <div className="mt-6 lg:mt-10 grid grid-cols-2 gap-x-5">
+              {/* Review */}
+              <div className="py-5">
+                button 1
+              </div>
+              {/* End Review */}
+              {/* Review */}
+              <div className="py-5">
+                button 2
+              </div>
+              {/* End Review */}
+            </div>
+          </div>
+          {/* Col */}
+          <div className="relative ms-4">
+            <img
+              className="w-full rounded-md"
+              src="https://placehold.co/800x700"
+              alt="Image Description"
+            />
+          </div>
+          {/* End Col */}
+        </div>
+        {/* End Grid */}
+      </div>
+      {/* End Hero */}
+    </>
   );
 }
+
