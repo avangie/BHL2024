@@ -1,36 +1,19 @@
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, Text, LargeBinary
+from sqlalchemy import create_engine, LargeBinary
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import datetime
 import random
 
+from backend.models import Message
+
 Base = declarative_base()
-
-class Message(Base):
-    __tablename__ = 'messages'
-
-    id = Column(Integer, primary_key=True)  # Klucz główny
-    date = Column(DateTime, default=datetime.datetime.utcnow)  # Data wiadomości
-    sender = Column(String(100))  # Nadawca
-    text = Column(Text)  # Tekst wiadomości
-    image = Column(String(200))  # Ścieżka do obrazu (zmiana z LargeBinary)
-
-    def __init__(self, sender, text, date=None, image=None):
-        if date is None:
-            date = datetime.datetime.utcnow()
-        self.sender = sender
-        self.text = text
-        self.date = date
-        self.image = image
-
-    def __repr__(self):
-        return f"<Message(id={self.id}, sender={self.sender}, date={self.date}, text={self.text[:20]}, image={self.image})>"
 
 
 def create_db():
-    engine = create_engine('sqlite:///new_messages.db', echo=True)
+    engine = create_engine("sqlite:///new_messages.db", echo=True)
     Base.metadata.create_all(engine)
     return engine
+
 
 def add_message(session, sender, text, date, image=None):
     message = Message(sender=sender, text=text, date=date, image=image)
@@ -38,12 +21,27 @@ def add_message(session, sender, text, date, image=None):
     session.commit()
     print(f"Message from {sender} added at {message.date}")
 
-def get_all_messages(session):
+
+def get_all_messages(session) -> list[Message]:
     messages = session.query(Message).all()
     for msg in messages:
         print(msg)
+    return messages
 
-senders = ["John", "Mary", "Alice", "Bob", "Sophia", "David", "Emma", "Michael", "Olivia", "James"]
+
+senders = [
+    "John",
+    "Mary",
+    "Alice",
+    "Bob",
+    "Sophia",
+    "David",
+    "Emma",
+    "Michael",
+    "Olivia",
+    "James",
+]
+
 
 def generate_message(sender, date):
     messages = [
@@ -67,16 +65,18 @@ def generate_message(sender, date):
         "I started a new book today, and it's fascinating! I love getting lost in a good story, it’s one of my favorite ways to unwind.",
         "My little sister graduated from college today! I’m so proud of her and everything she’s accomplished. She's going to do great things in life.",
         "It’s been a year since my father passed away. I visited his grave today, and it felt like he was still with me in spirit. Time heals, but the memories stay.",
-        "I ran my first marathon today! It was tough, but I finished. I’m so proud of myself and the people who supported me along the way."
+        "I ran my first marathon today! It was tough, but I finished. I’m so proud of myself and the people who supported me along the way.",
     ]
     return random.choice(messages)
+
 
 def generate_random_date():
     end_date = datetime.datetime.now()
     start_date = end_date - datetime.timedelta(days=270)
-    
+
     random_date = start_date + (end_date - start_date) * random.random()
     return random_date
+
 
 def generate_and_add_messages(session):
     for _ in range(20):
@@ -84,6 +84,7 @@ def generate_and_add_messages(session):
         date = generate_random_date()
         text = generate_message(sender, date)
         add_message(session, sender, text, date)
+
 
 def update_message(session, message_id, new_image):
     message = session.query(Message).filter(Message.id == message_id).first()
@@ -94,6 +95,7 @@ def update_message(session, message_id, new_image):
     else:
         print(f"Message with id {message_id} not found.")
 
+
 def main():
     engine = create_db()
     Session = sessionmaker(bind=engine)
@@ -102,6 +104,7 @@ def main():
     new_message_image = "assets/1presentation.jpg"
     update_message(session, 1, new_message_image)
     get_all_messages(session)
+
 
 if __name__ == "__main__":
     main()

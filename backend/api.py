@@ -1,32 +1,11 @@
 from fastapi import FastAPI, Query
 from datetime import date
 from dateutil.relativedelta import relativedelta
-from dataclasses import dataclass, field
+from backend.models import TAGS, Message, Pocztowka
+from database import get_all_messages, add_message
 
-# Create an instance of the FastAPI application
+
 app = FastAPI()
-
-# Define example data to return
-example_data = {
-    "message": "Hello, World!",
-    "author": "FastAPI Example",
-    "items": [
-        {"id": 1, "name": "Item 1"},
-        {"id": 2, "name": "Item 2"},
-        {"id": 3, "name": "Item 3"},
-        {"id": 4, "name": "Item 4"},
-    ]
-}
-
-
-@dataclass
-class Pocztowka:
-    author: str = ""
-    recipient: str = ""
-    title: str = ""
-    message: str = ""
-    time: str = ""
-    files: list[str] = field(default_factory=lambda: [])
 
 
 def get_data_from_db(
@@ -35,10 +14,32 @@ def get_data_from_db(
     tags: list[str],
     get_top: int,
 ) -> list[Pocztowka]:
+
+    messages: list[Message] = get_all_messages()
+    messages = [
+        message
+        for message in messages
+        if message.date >= from_time and message.date <= to_time
+    ]
+    pocztowki = [
+        Pocztowka(
+            author=message.sender,
+            message=message.text,
+            time=message.date,
+            files=[message.image],
+        )
+        for message in messages
+    ]
+    pocztowki = [
+        pocztowka
+        for pocztowka in pocztowki
+        if pocztowka.time >= from_time and pocztowka.time <= to_time
+    ]
+
     return [
         Pocztowka(
             author="author",
-            recipient="recipient",
+            # recipient="recipient",
             title="title",
             message="message",
             time="time",
@@ -46,7 +47,7 @@ def get_data_from_db(
         ),
         Pocztowka(
             author="author2",
-            recipient="recipient2",
+            # recipient="recipient2",
             title="title2",
             message="message2",
             time="time2",
@@ -69,9 +70,6 @@ def get_data_from_gpt(
     return [Pocztowka()]
 
 
-TAGS = ["family", "Earth", "Poland", "Europe"]
-
-
 # Define a GET endpoint
 @app.get("/data", response_model=list[Pocztowka])
 def get_example_data(
@@ -79,6 +77,7 @@ def get_example_data(
     to_time: str | None = Query(None, description="End time in ISO format"),
     tags: list[str] | None = Query(None, description="List of tags to filter items"),
     get_top: int | None = Query(None, description="Number of top items to return"),
+    sort_by: str | None = Query(None, description="Field to sort by"),
 ):
     print(
         f"dostalem zapytanie z parametrami: from_time={from_time}, to_time={to_time}, tags={tags}, get_top={get_top}"
@@ -97,11 +96,6 @@ def get_example_data(
     print(
         f"przeparsowalem do: from_time={parsed_from_time}, to_time={parsed_to_time}, tags={parsed_tags}, get_top={parsed_get_top}"
     )
-
-    filtered_items = example_data["items"]
-
-    if tags:
-        filtered_items = [item for item in filtered_items if item["name"] in tags]
 
     pocztowki = get_data_from_db(
         parsed_from_time, parsed_to_time, parsed_tags, parsed_get_top
