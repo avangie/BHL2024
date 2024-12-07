@@ -1,7 +1,8 @@
 from fastapi import FastAPI, Query
 from datetime import date
 from dateutil.relativedelta import relativedelta
-from models import add_message, get_session, TAGS, Pocztowka, get_all_pocztowki_from_db
+from models import add_message, get_session, Pocztowka, get_all_pocztowki_from_db
+from openaisiema import get_data_from_gpt
 
 app = FastAPI()
 
@@ -9,8 +10,6 @@ app = FastAPI()
 def get_data_from_db(
     from_time: date,
     to_time: date,
-    get_top: int,
-    sort_by: str,
 ) -> list[Pocztowka]:
     pocztowki: list[Pocztowka] = get_all_pocztowki_from_db()
     pocztowki = [
@@ -18,25 +17,7 @@ def get_data_from_db(
         for pocztowka in pocztowki
         if pocztowka.time >= from_time and pocztowka.time <= to_time
     ]
-    if sort_by == "time_asc":
-        pocztowki.sort(key=lambda x: x.time)
-    else:
-        pocztowki.sort(key=lambda x: x.time, reverse=True)
-    return pocztowki[:get_top]
-
-
-# def get_data_from_gpt(
-#    from_time: date,
-#    to_time: date,
-#    tags: list[str],
-#    get_top: int,
-# ) -> list[Pocztowka]:
-#    prompt = (
-#        f'Chcę zobaczyć {get_top} najważniejszych informacji z przedziału czasowego od {from_time} do {to_time} na temat {", ".join(tags)}.'
-#        + "Chciałbym te dane otrzymać w formacie JSON w następującej strukturze: jest to lista obiektów, gdzie każdy obiekt zawiera pola: "
-#        + '"title": string, "message": string, "time": string".'
-#    )
-#    return [Pocztowka()]
+    return pocztowki
 
 
 @app.get("/data", response_model=list[Pocztowka])
@@ -53,20 +34,30 @@ def get_example_data(
     parsed_from_time = (
         date.fromisoformat(from_time)
         if from_time
-        else date.today() - relativedelta(years=40)
+        else date.today() - relativedelta(years=5)
     )
     parsed_to_time = date.fromisoformat(to_time) if to_time else date.today()
-    parsed_tags = [tag for tag in tags if tag in TAGS] if tags else []
+    # parsed_tags = [tag for tag in tags if tag in TAGS] if tags else []
+    parsed_tags = tags if tags else ["family"]
     parsed_get_top = get_top if get_top else 10
-    parsed_sort_by = sort_by if sort_by else "time_desc"
+    parsed_sort_by = sort_by if sort_by else "time_asc"
 
     print(
         f"przeparsowalem do: from_time={parsed_from_time}, to_time={parsed_to_time}, tags={parsed_tags}, get_top={parsed_get_top}"
     )
 
-    pocztowki = get_data_from_db(
-        parsed_from_time, parsed_to_time, parsed_get_top, parsed_sort_by
-    )
+    if "family" in parsed_tags:
+        pocztowki = get_data_from_db(parsed_from_time, parsed_to_time)
+    else:
+        pocztowki = get_data_from_gpt(
+            parsed_from_time, parsed_to_time, parsed_tags, parsed_get_top
+        )
+
+    if parsed_sort_by == "time_asc":
+        pocztowki.sort(key=lambda x: x.time)
+    else:
+        pocztowki.sort(key=lambda x: x.time, reverse=True)
+    pocztowki = pocztowki[:parsed_get_top]
 
     print(f"wysylam odpowiedz: {pocztowki}")
 
