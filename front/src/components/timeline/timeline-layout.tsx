@@ -1,6 +1,8 @@
+// timeline-layout.tsx
 "use client";
 
 import React from "react";
+import { Button } from "@/components/ui/button"; // Zakładając, że masz już komponent Button
 import {
     Timeline,
     TimelineItem,
@@ -20,9 +22,9 @@ interface TimelineLayoutProps {
 
 export const TimelineLayout = ({ items }: TimelineLayoutProps) => {
     return (
-        <Timeline>
-            {items.map((item) => {
-                return (
+        <div className="flex flex-col items-center">
+            <Timeline>
+                {items.map((item) => (
                     <TimelineItem key={item.id}>
                         {items.indexOf(item) < items.length - 1 && <TimelineConnector />}
                         <TimelineHeader>
@@ -34,8 +36,19 @@ export const TimelineLayout = ({ items }: TimelineLayoutProps) => {
                             <TimelineDescription>{item.description}</TimelineDescription>
                         </TimelineContent>
                     </TimelineItem>
-                );
-            })}
-        </Timeline>
+                ))}
+            </Timeline>
+
+            {/* Przycisk w prawym dolnym rogu */}
+            <Button
+                size={"lg"}
+                onClick={() => {
+                    window.location.href = "/recipient";
+                }}
+                className="mt-8"
+            >
+                Your family's history
+            </Button>
+        </div>
     );
 };

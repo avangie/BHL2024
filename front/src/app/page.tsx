@@ -17,10 +17,10 @@ export default function HeroSectionImageWithReviews() {
             </p>
             {/* Buttons */}
             <div className="mt-7 grid gap-3 w-full sm:inline-flex">
-              <Button size={"lg"} onClick={()=>{window.location.href = "/timeline"}}>
-                I am the recepient
+              <Button size={"lg"} onClick={() => { window.location.href = "/recipient" }}>
+                I am the recipient
               </Button>
-              <Button variant={"outline"} size={"lg"} onClick={()=>{window.location.href = "/sender"}}>
+              <Button variant={"outline"} size={"lg"} onClick={() => { window.location.href = "/sender" }}>
                 I am family
               </Button>
             </div>
