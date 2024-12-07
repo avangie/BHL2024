@@ -1,17 +1,19 @@
+from uuid import uuid4
+from logging import getLogger
+from datetime import date
 from dataclasses import dataclass, field
-from sqlalchemy import Column, DateTime, Integer, String, Text, create_engine
+from sqlalchemy import Column, Integer, String, Text, create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-import datetime
-from datetime import date
-import uuid
+
+logger = getLogger("uvicorn.error")
 
 Base = declarative_base()
 
 
 @dataclass
 class Pocztowka:
-    id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    id: str = field(default_factory=lambda: str(uuid4()))
     author: str = ""
     recipient: str = ""
     title: str = ""
@@ -54,14 +56,8 @@ def add_message(session, sender, text, date_str, image=None):
     message = Message(sender=sender, text=text, date_str=date_str, image=image)
     session.add(message)
     session.commit()
-    print(f"Message from {sender} added at {date_str}")
 
-
-def add_message_from_input(sender, text, image=None):
-    session = get_session()
-    date = datetime.datetime.utcnow()
-    add_message(session, sender, text, date, image)
-    session.close()
+    logger.info(f"Message from {sender} added at {date_str}")
 
 
 def message_to_pocztowka(message: Message) -> Pocztowka:
@@ -73,35 +69,7 @@ def message_to_pocztowka(message: Message) -> Pocztowka:
     )
 
 
-def pocztowka_to_message(pocztowka: Pocztowka) -> Message:
-    return Message(
-        sender=pocztowka.author,
-        text=pocztowka.message,
-        date=pocztowka.time,
-        image=pocztowka.file,
-    )
-
-
-def get_all_messages_from_db():
-    session = get_session()
-
-    messages = session.query(Message).all()
-
-    session.close()
-
-    return [
-        {
-            "id": msg.id,
-            "date": msg.date,
-            "sender": msg.sender,
-            "text": msg.text,
-            "image": msg.image,
-        }
-        for msg in messages
-    ]
-
-
-def get_all_pocztowki_from_db():
+def get_all_pocztowki_from_db() -> list[Pocztowka]:
     session = get_session()
 
     messages = session.query(Message).all()
@@ -111,14 +79,13 @@ def get_all_pocztowki_from_db():
     return [message_to_pocztowka(msg) for msg in messages]
 
 
-# Przykładowe użycie
-# if __name__ == "__main__":
-#     # Dodajemy wiadomość
-#     #add_message_from_input("John", "This is a test message", "assets/images/test.jpg")
-
-#     # Pobieramy wszystkie wiadomości z bazy danych
-#     messages = get_all_messages_from_db()
-
-#     # Wyświetlamy wiadomości
-#     for msg in messages:
-#         print(msg)
+def add_pocztowka_to_db(pocztowka: Pocztowka):
+    session = get_session()
+    add_message(
+        session,
+        pocztowka.author,
+        pocztowka.message,
+        str(pocztowka.time),
+        pocztowka.file,
+    )
+    session.close()

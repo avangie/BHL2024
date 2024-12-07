@@ -8,3 +8,7 @@ docker compose up --build
 ## Docker instalation guide 
 ### For Ubuntu
 [Docker docs install Ubuntu](https://docs.docker.com/desktop/setup/install/linux/ubuntu/)
+
+## Implementacja
+
+W projekcie używamy fastapi oraz sqlite3 na backendzie, a na froncie next.js.

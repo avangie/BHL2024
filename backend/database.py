@@ -6,7 +6,7 @@ import random
 
 Base = declarative_base()
 
-from models import Message
+from common import Message
 
 
 def create_db():
@@ -76,8 +76,7 @@ def generate_random_date():
     random_seconds = random.randint(0, int((end_date - start_date).total_seconds()))
     random_date = start_date + datetime.timedelta(seconds=random_seconds)
 
-    return random_date.strftime('%Y-%m-%d %H:%M:%S')
-
+    return random_date.strftime("%Y-%m-%d %H:%M:%S")
 
 
 def generate_and_add_messages(session):
@@ -103,7 +102,7 @@ def main():
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    for i in range(1,21):
+    for i in range(1, 21):
         new_message_image = generate_random_date()
         update_message(session, i, new_message_image)
     get_all_messages(session)

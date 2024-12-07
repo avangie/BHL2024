@@ -1,7 +1,7 @@
-from openai import OpenAI
-from models import Pocztowka
-from datetime import date
 import json
+from common import Pocztowka, logger
+from datetime import date
+from openai import OpenAI
 
 client = OpenAI()
 
@@ -23,6 +23,8 @@ def get_data_from_gpt(
         model="gpt3.5-turbo", messages=[{"role": "user", "content": prompt}]
     )
 
+    logger.info(f"Got response from GPT-3: {response}")
+
     flag = False
     for i in range(10):
         for j in range(-1, -10, -1):
@@ -34,5 +36,7 @@ def get_data_from_gpt(
                 continue
         if flag:
             break
+
+    logger.info(f"Parsed data from GPT-3: {d}")
 
     return [Pocztowka(**x) for x in d]

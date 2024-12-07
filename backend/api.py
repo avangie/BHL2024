@@ -1,15 +1,18 @@
 from fastapi import FastAPI, Query
 from datetime import date
 from dateutil.relativedelta import relativedelta
-from models import add_message, get_session, Pocztowka, get_all_pocztowki_from_db
-from openaisiema import get_data_from_gpt
 from fastapi.middleware.cors import CORSMiddleware
+
+from common import Pocztowka, get_all_pocztowki_from_db, add_pocztowka_to_db, logger
+from openaihandler import get_data_from_gpt
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Zmień na odpowiednią domenę, np. frontend na porcie 3000
+    allow_origins=[
+        "http://localhost:3000"
+    ],  # Zmień na odpowiednią domenę, np. frontend na porcie 3000
     allow_credentials=True,
     allow_methods=["*"],  # Umożliwia wszystkie metody, takie jak GET, POST, PUT, DELETE
     allow_headers=["*"],  # Zezwalaj na wszystkie nagłówki
@@ -37,22 +40,23 @@ def get_example_data(
     get_top: int | None = Query(None, description="Number of top items to return"),
     sort_by: str | None = Query(None, description="Field to sort by"),
 ):
-    print(
-        f"dostalem zapytanie z parametrami: from_time={from_time}, to_time={to_time}, tags={tags}, get_top={get_top}"
+
+    logger.info(
+        f"Input parameters: from_time={from_time}, to_time={to_time}, tags={tags}, get_top={get_top}"
     )
+
     parsed_from_time = (
         date.fromisoformat(from_time)
         if from_time
         else date.today() - relativedelta(years=5)
     )
     parsed_to_time = date.fromisoformat(to_time) if to_time else date.today()
-    # parsed_tags = [tag for tag in tags if tag in TAGS] if tags else []
     parsed_tags = tags if tags else ["family"]
     parsed_get_top = get_top if get_top else 10
     parsed_sort_by = sort_by if sort_by else "time_asc"
 
-    print(
-        f"przeparsowalem do: from_time={parsed_from_time}, to_time={parsed_to_time}, tags={parsed_tags}, get_top={parsed_get_top}"
+    logger.info(
+        f"Parsed input parameters: from_time={parsed_from_time}, to_time={parsed_to_time}, tags={parsed_tags}, get_top={parsed_get_top}"
     )
 
     if "family" in parsed_tags:
@@ -68,7 +72,7 @@ def get_example_data(
         pocztowki.sort(key=lambda x: x.time, reverse=True)
     pocztowki = pocztowki[:parsed_get_top]
 
-    print(f"wysylam odpowiedz: {pocztowki}")
+    logger.info(f"Return response: {pocztowki}")
 
     response = [p.__dict__ for p in pocztowki]
     return response
@@ -76,12 +80,7 @@ def get_example_data(
 
 @app.post("/upload")
 async def upload_file(pocztowka: Pocztowka):
-    print(f"Otrzymałem pocztówkę: {pocztowka}")
-    session = get_session()
-    add_message(
-        session,
-        pocztowka.author,
-        pocztowka.message,
-        str(pocztowka.time),
-        pocztowka.file,
-    )
+
+    logger.info(f"Incoming pocztowka: {pocztowka}")
+
+    add_pocztowka_to_db(pocztowka)
