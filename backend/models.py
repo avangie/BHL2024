@@ -1,15 +1,17 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from sqlalchemy import Column, DateTime, Integer, String, Text, create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 import datetime
 from datetime import date
+import uuid
 
 Base = declarative_base()
 
 
 @dataclass
 class Pocztowka:
+    id: str = field(default_factory=lambda: str(uuid.uuid4()))
     author: str = ""
     recipient: str = ""
     title: str = ""
@@ -18,26 +20,22 @@ class Pocztowka:
     file: str = ""
 
 
-TAGS = ["family", "Earth", "Poland", "Europe"]
-SORT_BY = ["time_asc", "time_desc"]
-
-
 class Message(Base):
     __tablename__ = "messages"
 
     id = Column(Integer, primary_key=True)
-    date = Column(String(100)) 
+    date = Column(String(100))
     sender = Column(String(100))
     text = Column(Text)
     image = Column(String(200))
-    date_str = Column(String(100))  
+    date_str = Column(String(100))
 
-    def __init__(self, sender, text, date=None, image=None):
-        if date is None:
-            date = datetime.datetime.utcnow()
+    def __init__(self, sender, text, date_str=None, image=None):
+        if date_str is None:
+            date_str = str(date.today())
         self.sender = sender
         self.text = text
-        self.date = date
+        self.date_str = date_str
         self.image = image
 
     def __repr__(self):
@@ -52,13 +50,11 @@ def get_session():
     return session
 
 
-def add_message(session, sender, text, date, image=None):
-    date_str = date.strftime("%Y-%m-%d %H:%M:%S")  
-    message = Message(sender=sender, text=text, date=date_str, image=image)
+def add_message(session, sender, text, date_str, image=None):
+    message = Message(sender=sender, text=text, date_str=date_str, image=image)
     session.add(message)
     session.commit()
     print(f"Message from {sender} added at {date_str}")
-
 
 
 def add_message_from_input(sender, text, image=None):
@@ -72,7 +68,7 @@ def message_to_pocztowka(message: Message) -> Pocztowka:
     return Pocztowka(
         author=message.sender,
         message=message.text,
-        time=date.fromisoformat(message.date),
+        time=date.fromisoformat(message.date_str.split(" ")[0]),
         file=message.image,
     )
 

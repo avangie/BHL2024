@@ -20,7 +20,7 @@ def get_data_from_gpt(
     )
 
     response = client.chat.completions.create(
-        model="gpt-4o", messages=[{"role": "user", "content": prompt}]
+        model="gpt3.5-turbo", messages=[{"role": "user", "content": prompt}]
     )
 
     flag = False
