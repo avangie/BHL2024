@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Query
 from datetime import date
+from fastapi.staticfiles import StaticFiles
 from dateutil.relativedelta import relativedelta
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -7,6 +8,7 @@ from common import Pocztowka, get_all_pocztowki_from_db, add_pocztowka_to_db, lo
 from openaihandler import get_data_from_gpt
 
 app = FastAPI()
+app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 
 app.add_middleware(
     CORSMiddleware,

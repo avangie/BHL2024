@@ -61,17 +61,13 @@ def add_message(session, sender, text, date_str, image=None):
 
 
 def message_to_pocztowka(message: Message) -> Pocztowka:
-    try:
-        with open(message.image, "r") as f:
-            image = f.read()
-    except:
-        image = ""
     return Pocztowka(
         author=message.sender,
         message=message.text,
         time=date.fromisoformat(message.date_str.split(" ")[0]),
-        file=image,
+        file=message.image,
     )
+
 
 
 def get_all_pocztowki_from_db() -> list[Pocztowka]:
@@ -87,14 +83,14 @@ def get_all_pocztowki_from_db() -> list[Pocztowka]:
 def add_pocztowka_to_db(pocztowka: Pocztowka):
     session = get_session()
     file_name = uuid4().hex
-    file_name = f"assets/{file_name}.png"
-    with open(file_name, "w") as f:
-        f.write(pocztowka.file)
+    file_path = f"assets/{file_name}.png"
+    with open(f"assets/{file_name}.png", "wb") as f:
+        f.write(pocztowka.file.encode())
     add_message(
         session,
         pocztowka.author,
         pocztowka.message,
         str(pocztowka.time),
-        file_name,
+        file_path,
     )
     session.close()
