@@ -14,9 +14,9 @@ export default function Page() {
             <Button
                 size={"lg"}
                 onClick={() => {
-                    window.location.href = "/timeline";
+                    window.location.href = "/date-range";
                 }}
-                className="mt-8" 
+                className="mt-8"
             >
                 World's history
             </Button>

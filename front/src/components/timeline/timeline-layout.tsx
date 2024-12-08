@@ -2,7 +2,7 @@
 "use client";
 
 import React from "react";
-import { Button } from "@/components/ui/button"; // Zakładając, że masz już komponent Button
+import { Button } from "@/components/ui/button";
 import {
     Timeline,
     TimelineItem,
@@ -28,18 +28,17 @@ export const TimelineLayout = ({ items }: TimelineLayoutProps) => {
                     <TimelineItem key={item.id}>
                         {items.indexOf(item) < items.length - 1 && <TimelineConnector />}
                         <TimelineHeader>
-                            <TimelineTime>{item.date}</TimelineTime>
+                            <TimelineTime>{item.time}</TimelineTime>
                             <TimelineIcon />
                             <TimelineTitle>{item.title}</TimelineTitle>
                         </TimelineHeader>
                         <TimelineContent>
-                            <TimelineDescription>{item.description}</TimelineDescription>
+                            <TimelineDescription>{item.message}</TimelineDescription>
                         </TimelineContent>
                     </TimelineItem>
                 ))}
             </Timeline>
 
-            {/* Przycisk w prawym dolnym rogu */}
             <Button
                 size={"lg"}
                 onClick={() => {
