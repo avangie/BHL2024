@@ -46,7 +46,7 @@ export const TimelineLayout = ({ items }: TimelineLayoutProps) => {
                 }}
                 className="mt-8"
             >
-                Your family's history
+                Your family&apos;s history
             </Button>
         </div>
     );

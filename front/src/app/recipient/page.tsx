@@ -9,11 +9,18 @@ interface PostcardData {
     text: string
 }
 
+interface reqResponse {
+    file?: string
+    author: string
+    time: string
+    message: string
+}
+
 export default async function Home() {
     const res = await fetch('http://127.0.0.1:8000/data')
     const data = await res.json()
 
-    const postcards: PostcardData[] = data.map((item: any) => ({
+    const postcards: PostcardData[] = data.map((item: reqResponse) => ({
         frontImage: item.file ? `http://127.0.0.1:8000/${item.file}` : '/placeholder.svg',
         author: item.author,
         date: item.time,
@@ -26,7 +33,7 @@ export default async function Home() {
                 <FlippablePostcard postcards={postcards} />
             </div>
             <Button asChild className="relative z-10">
-                <Link href="/date-range">World's history</Link>
+                <Link href="/date-range">World&apos;s history</Link>
             </Button>
         </div>
     )

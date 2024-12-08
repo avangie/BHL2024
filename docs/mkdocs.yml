@@ -1,4 +1,4 @@
-site_name: Last Nine Months Documentation
+site_name: Nine Months
 nav:
   - Home: index.md
   - "User Guide": user-guide.md
