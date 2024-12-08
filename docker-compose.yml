@@ -12,3 +12,9 @@ services:
       NODE_ENV: production
     ports:
       - 3000:3000
+  # backend:
+  #   build:
+  #     context: ./backend
+  #   ports:
+  #     - 8000:8000
+
