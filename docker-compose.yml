@@ -6,4 +6,9 @@ services:
     volumes:
       - ./docs:/docs
   front:
-  
+    build:
+      context: ./front
+    environment:
+      NODE_ENV: production
+    ports:
+      - 3000:3000
