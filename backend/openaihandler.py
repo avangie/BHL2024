@@ -1,5 +1,5 @@
 import json
-from common import Pocztowka, logger
+from common import Postcard, logger
 from datetime import date
 from openai import OpenAI
 
@@ -11,7 +11,7 @@ def get_data_from_gpt(
     to_time: date,
     tags: list[str],
     get_top: int,
-) -> list[Pocztowka]:
+) -> list[Postcard]:
 
     prompt = (
         f"I want to see {get_top} most important events from the time range {from_time} "
@@ -45,4 +45,4 @@ def get_data_from_gpt(
 
     logger.info(f"Parsed data from GPT-3: {d}")
 
-    return [Pocztowka(**x) for x in d]
+    return [Postcard(**x) for x in d]

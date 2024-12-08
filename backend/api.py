@@ -5,7 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from dateutil.relativedelta import relativedelta
 from fastapi.middleware.cors import CORSMiddleware
 
-from common import Pocztowka, get_all_pocztowki_from_db, add_pocztowka_to_db, logger
+from common import Postcard, get_all_postcards_from_db, add_postcard_to_db, logger
 from openaihandler import get_data_from_gpt
 from fastapi import UploadFile, File
 
@@ -24,17 +24,17 @@ app.add_middleware(
 def get_data_from_db(
     from_time: date,
     to_time: date,
-) -> list[Pocztowka]:
-    pocztowki: list[Pocztowka] = get_all_pocztowki_from_db()
-    pocztowki = [
-        pocztowka
-        for pocztowka in pocztowki
-        if pocztowka.time >= from_time and pocztowka.time <= to_time
+) -> list[Postcard]:
+    postcards: list[Postcard] = get_all_postcards_from_db()
+    postcards = [
+        postcard
+        for postcard in postcards
+        if postcard.time >= from_time and postcard.time <= to_time
     ]
-    return pocztowki
+    return postcards
 
 
-@app.get("/data", response_model=list[Pocztowka])
+@app.get("/data", response_model=list[Postcard])
 def get_example_data(
     from_time: str | None = Query(None, description="Start time in ISO format"),
     to_time: str | None = Query(None, description="End time in ISO format"),
@@ -62,21 +62,21 @@ def get_example_data(
     )
 
     if "family" in parsed_tags:
-        pocztowki = get_data_from_db(parsed_from_time, parsed_to_time)
+        postcards = get_data_from_db(parsed_from_time, parsed_to_time)
     else:
-        pocztowki = get_data_from_gpt(
+        postcards = get_data_from_gpt(
             parsed_from_time, parsed_to_time, parsed_tags, parsed_get_top
         )
 
     if parsed_sort_by == "time_asc":
-        pocztowki.sort(key=lambda x: x.time)
+        postcards.sort(key=lambda x: x.time)
     else:
-        pocztowki.sort(key=lambda x: x.time, reverse=True)
-    pocztowki = pocztowki[:parsed_get_top]
+        postcards.sort(key=lambda x: x.time, reverse=True)
+    postcards = postcards[:parsed_get_top]
 
-    logger.info(f"Return response: {pocztowki}")
+    logger.info(f"Return response: {postcards}")
 
-    response = [p.__dict__ for p in pocztowki]
+    response = [p.__dict__ for p in postcards]
     return response
 
 
@@ -98,7 +98,7 @@ async def upload_file(
             content = await file.read()
             f.write(content)
 
-        pocztowka = Pocztowka(
+        postcard = Postcard(
             author=author,
             recipient=recipient,
             title=title,
@@ -107,7 +107,7 @@ async def upload_file(
             file=file_name,
         )
 
-        add_pocztowka_to_db(pocztowka, file)
+        add_postcard_to_db(postcard, file)
 
         return {"message": "File and data uploaded successfully", "file_name": file_name}
     

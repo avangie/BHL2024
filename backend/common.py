@@ -14,7 +14,7 @@ Base = declarative_base()
 
 
 @dataclass
-class Pocztowka:
+class Postcard:
     file: str = ""
     id: str = field(default_factory=lambda: str(uuid4()))
     author: str = ""
@@ -62,8 +62,8 @@ def add_message(session, sender, text, date_str, image=None):
     logger.info(f"Message from {sender} added at {date_str}")
 
 
-def message_to_pocztowka(message: Message) -> Pocztowka:
-    return Pocztowka(
+def message_to_postcard(message: Message) -> Postcard:
+    return Postcard(
         author=message.sender,
         message=message.text,
         time=date.fromisoformat(message.date_str.split(" ")[0]),
@@ -72,17 +72,17 @@ def message_to_pocztowka(message: Message) -> Pocztowka:
 
 
 
-def get_all_pocztowki_from_db() -> list[Pocztowka]:
+def get_all_postcards_from_db() -> list[Postcard]:
     session = get_session()
 
     messages = session.query(Message).all()
 
     session.close()
 
-    return [message_to_pocztowka(msg) for msg in messages]
+    return [message_to_postcard(msg) for msg in messages]
 
 
-def add_pocztowka_to_db(pocztowka: Pocztowka, file: UploadFile = None):
+def add_postcard_to_db(postcard: Postcard, file: UploadFile = None):
     session = get_session()
 
     if file:
@@ -93,9 +93,9 @@ def add_pocztowka_to_db(pocztowka: Pocztowka, file: UploadFile = None):
     
     add_message(
         session,
-        pocztowka.author,
-        pocztowka.message,
-        str(pocztowka.time),
+        postcard.author,
+        postcard.message,
+        str(postcard.time),
         file_path,
     )
     session.close()
