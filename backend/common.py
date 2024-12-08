@@ -19,7 +19,7 @@ class Pocztowka:
     title: str = ""
     message: str = ""
     time: date = date.today()
-    file: bytes = b""
+    file: str = ""
 
 
 class Message(Base):
@@ -61,8 +61,11 @@ def add_message(session, sender, text, date_str, image=None):
 
 
 def message_to_pocztowka(message: Message) -> Pocztowka:
-    with open(message.image, "rb") as f:
-        image = f.read()
+    try:
+        with open(message.image, "r") as f:
+            image = f.read()
+    except:
+        image = ""
     return Pocztowka(
         author=message.sender,
         message=message.text,
@@ -85,7 +88,7 @@ def add_pocztowka_to_db(pocztowka: Pocztowka):
     session = get_session()
     file_name = uuid4().hex
     file_name = f"assets/{file_name}.png"
-    with open(file_name, "wb") as f:
+    with open(file_name, "w") as f:
         f.write(pocztowka.file)
     add_message(
         session,

@@ -1,4 +1,5 @@
 "use client"
+
 import { JSX, SVGProps, useState } from "react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
@@ -46,38 +47,46 @@ export default function SenderForm() {
     }
   };
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: { authorField: any; recipientField: any; titleField: any; messageField: any; }) {
     try {
-      console.log(values);
-      toast(
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(values, null, 2)}</code>
-        </pre>
-      );
+      const payload = {
+        id: "id",
+        author: values.authorField,
+        recipient: values.recipientField,
+        title: values.titleField,
+        message: values.messageField,
+        time: new Date().toISOString().split("T")[0],
+        file: files.length > 0 ? await convertToBase64(files[0]) : "",
+      };
+
+      const response = await fetch("http://127.0.0.1:8000/upload", {
+        method: "POST",
+        headers: {
+          "accept": "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        toast.success("Form submitted successfully!");
+      } else {
+        throw new Error("Failed to submit the form.");
+      }
     } catch (error) {
       console.error("Form submission error", error);
       toast.error("Failed to submit the form. Please try again.");
     }
   }
 
-  function FileIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
-    return (
-      <svg
-        {...props}
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
-        <path d="M14 2v4a2 2 0 0 0 2 2h4" />
-      </svg>
-    );
+
+  async function convertToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+    });
   }
 
   return (
@@ -170,5 +179,25 @@ export default function SenderForm() {
         <Button type="submit">Submit</Button>
       </form>
     </Form>
+  );
+}
+
+function FileIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+    </svg>
   );
 }
