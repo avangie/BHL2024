@@ -4,8 +4,12 @@ Add .env file in backend directory with following content:
 ```
 export OPENAI_API_KEY="your_openai_api_key"
 ```
+Change <your_openai_api_key> to your openai api key.
 Then run following commands in backend directory:
 ```
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 source .env
 fastapi run
 ```
