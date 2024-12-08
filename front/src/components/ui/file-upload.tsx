@@ -16,7 +16,6 @@ export default function FileUploadForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Załączone pliki:", files);
   };
 
   return (

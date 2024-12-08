@@ -32,7 +32,6 @@ export default function FormPage() {
 
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
         const resultsLimit = parseInt(data.resultsLimit.toString(), 10);
-        console.log("Form data:", { ...data, resultsLimit });
 
         const tags = data.tags.split(",").map((tag) => tag.trim());
         const queryParams = new URLSearchParams({
@@ -59,7 +58,6 @@ export default function FormPage() {
             }
 
             const responseData = await response.json();
-            console.log("Backend response:", responseData);
 
             // Zapisz dane do localStorage
             localStorage.setItem("timelineData", JSON.stringify(responseData));

@@ -54,7 +54,7 @@ def get_example_data(
     )
     parsed_to_time = date.fromisoformat(to_time) if to_time else date.today()
     parsed_tags = tags if tags else ["family"]
-    parsed_get_top = get_top if get_top else 10
+    parsed_get_top = get_top if get_top else 30
     parsed_sort_by = sort_by if sort_by else "time_asc"
 
     logger.info(

@@ -76,7 +76,6 @@ export default function SenderForm() {
             if (file) {
                 formData.append("file", file);
             }
-            console.log("Form data:", values, file);
 
             const response = await fetch("http://127.0.0.1:8000/upload", {
                 method: "POST",

@@ -37,7 +37,6 @@ const FlippablePostcard: React.FC<FlippablePostcardProps> = ({ postcards }) => {
         })
     }
 
-    console.log(postcards)
     const currentPostcard = postcards[currentIndex]
     const hasImage = currentPostcard.frontImage !== ''
 
@@ -69,7 +68,7 @@ const FlippablePostcard: React.FC<FlippablePostcardProps> = ({ postcards }) => {
                         <div className={`absolute w-full h-full [backface-visibility:hidden] ${isFlipped ? 'opacity-0' : 'opacity-100'}`}>
                             <Image
                                 src={currentPostcard.frontImage}
-                                alt="Postcard front"
+                                alt=""
                                 layout="fill"
                                 objectFit="cover"
                             />
