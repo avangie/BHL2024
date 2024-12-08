@@ -107,7 +107,7 @@ async def upload_file(
             file=file_name,
         )
 
-        add_postcard_to_db(postcard, file)
+        add_postcard_to_db(postcard, file_name)
 
         return {"message": "File and data uploaded successfully", "file_name": file_name}
     

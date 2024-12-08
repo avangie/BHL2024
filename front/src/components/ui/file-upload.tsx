@@ -40,7 +40,7 @@ export default function FileUploadForm() {
         )}
       </div>
 
-      <Button type="submit">Wyślij</Button>
+      <Button type="submit">Send</Button>
     </form>
   );
 }
