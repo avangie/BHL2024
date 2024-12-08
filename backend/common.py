@@ -5,6 +5,8 @@ from dataclasses import dataclass, field
 from sqlalchemy import Column, Integer, String, Text, create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+from fastapi import UploadFile
+
 
 logger = getLogger("uvicorn.error")
 
@@ -13,13 +15,13 @@ Base = declarative_base()
 
 @dataclass
 class Pocztowka:
+    file: str = ""
     id: str = field(default_factory=lambda: str(uuid4()))
     author: str = ""
     recipient: str = ""
     title: str = ""
     message: str = ""
     time: date = date.today()
-    file: str = ""
 
 
 class Message(Base):
@@ -80,12 +82,15 @@ def get_all_pocztowki_from_db() -> list[Pocztowka]:
     return [message_to_pocztowka(msg) for msg in messages]
 
 
-def add_pocztowka_to_db(pocztowka: Pocztowka):
+def add_pocztowka_to_db(pocztowka: Pocztowka, file: UploadFile = None):
     session = get_session()
-    file_name = uuid4().hex
-    file_path = f"assets/{file_name}.png"
-    with open(f"assets/{file_name}.png", "wb") as f:
-        f.write(pocztowka.file.encode())
+
+    if file:
+        file_name = uuid4().hex
+        file_path = f"assets/{file_name}.{file.filename.split('.')[-1]}"
+    else:
+        file_path = None
+    
     add_message(
         session,
         pocztowka.author,

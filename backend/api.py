@@ -1,4 +1,5 @@
-from fastapi import FastAPI, Query
+from uuid import uuid4
+from fastapi import FastAPI, Form, Query
 from datetime import date
 from fastapi.staticfiles import StaticFiles
 from dateutil.relativedelta import relativedelta
@@ -6,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from common import Pocztowka, get_all_pocztowki_from_db, add_pocztowka_to_db, logger
 from openaihandler import get_data_from_gpt
+from fastapi import UploadFile, File
 
 app = FastAPI()
 app.mount("/assets", StaticFiles(directory="assets"), name="assets")
@@ -79,8 +81,36 @@ def get_example_data(
 
 
 @app.post("/upload")
-async def upload_file(pocztowka: Pocztowka):
+async def upload_file(
+    author: str = Form(...),
+    recipient: str = Form(...),
+    title: str = Form(...),
+    message: str = Form(...),
+    file: UploadFile = File(...),
+):
+    try:
+        # Save the uploaded file
+        file_name = f"{uuid4().hex}.{file.filename.split('.')[-1]}"
+        file_path = f"assets/{file_name}"
 
-    logger.info(f"Incoming pocztowka: {pocztowka}")
+        # Save the file to disk
+        with open(file_path, "wb") as f:
+            content = await file.read()
+            f.write(content)
 
-    add_pocztowka_to_db(pocztowka)
+        pocztowka = Pocztowka(
+            author=author,
+            recipient=recipient,
+            title=title,
+            message=message,
+            time=date.today(),
+            file=file_name,
+        )
+
+        add_pocztowka_to_db(pocztowka, file)
+
+        return {"message": "File and data uploaded successfully", "file_name": file_name}
+    
+    except Exception as e:
+        logger.error(f"Error uploading file: {str(e)}")
+        return {"message": "Failed to upload the file", "error": str(e)}

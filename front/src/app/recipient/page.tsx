@@ -21,7 +21,7 @@ export default async function Home() {
 
     return (
         <div className="flex items-center justify-center min-h-screen">
-            <div className="relative z-10 bg-black/40 backdrop-blur-xl p-8 rounded-lg border border-white/10 w-[45%]">
+            <div className="relative z-10 bg-black/40 backdrop-blur-xl p-8 rounded-lg border border-white/10">
                 <FlippablePostcard postcards={postcards} />
             </div>
         </div>

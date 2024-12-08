@@ -26,7 +26,7 @@ const formSchema = z.object({
 });
 
 export default function SenderForm() {
-    const [files, setFiles] = useState<File[]>([]);
+    const [file, setFile] = useState<File | null>(null);
     const [popupMessage, setPopupMessage] = useState<string | null>(null);
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -40,41 +40,54 @@ export default function SenderForm() {
     });
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) {
-            const selectedFiles = Array.from(e.target.files);
-            setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
+        if (e.target.files && e.target.files[0]) {
+            const selectedFile = e.target.files[0];
+            const validExtensions = ["image/jpeg", "image/png"];
+            if (validExtensions.includes(selectedFile.type)) {
+                setFile(selectedFile);
+            } else {
+                alert("Only .jpg, .jpeg, and .png files are allowed.");
+                e.target.value = "";
+            }
+        }
+    };
+
+
+    const handleFileRemove = () => {
+        setFile(null);
+        const fileInput = document.getElementById("file") as HTMLInputElement;
+        if (fileInput) {
+            fileInput.value = "";
         }
     };
 
     async function onSubmit(values: {
-        authorField: any;
-        recipientField: any;
-        titleField: any;
-        messageField: any;
+        authorField: string;
+        recipientField: string;
+        titleField: string;
+        messageField: string;
     }) {
         try {
-            const payload = {
-                id: "id",
-                author: values.authorField,
-                recipient: values.recipientField,
-                title: values.titleField,
-                message: values.messageField,
-                time: new Date().toISOString().split("T")[0],
-                file: files.length > 0 ? await convertToBase64(files[0]) : "",
-            };
+            const formData = new FormData();
+            formData.append("author", values.authorField);
+            formData.append("recipient", values.recipientField);
+            formData.append("title", values.titleField);
+            formData.append("message", values.messageField);
+            if (file) {
+                formData.append("file", file);
+            }
+            console.log("Form data:", values, file);
 
             const response = await fetch("http://127.0.0.1:8000/upload", {
                 method: "POST",
-                headers: {
-                    accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(payload),
+                body: formData,
             });
+
 
             if (response.ok) {
                 setPopupMessage("Form submitted successfully!");
                 form.reset();
+                setFile(null);
                 setTimeout(() => setPopupMessage(null), 3000);
             } else {
                 throw new Error("Failed to submit the form.");
@@ -84,15 +97,6 @@ export default function SenderForm() {
             setPopupMessage("Failed to submit the form. Please try again.");
             setTimeout(() => setPopupMessage(null), 3000);
         }
-    }
-
-    async function convertToBase64(file: File): Promise<string> {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result as string);
-            reader.onerror = (error) => reject(error);
-        });
     }
 
     return (
@@ -172,9 +176,6 @@ export default function SenderForm() {
                                     <span className="text-sm font-medium text-gray-500">
                                         Drag and drop a file or click to browse
                                     </span>
-                                    <span className="text-xs text-gray-500">
-                                        PDF, image, video, or audio
-                                    </span>
                                 </div>
                                 <div className="space-y-2 text-sm">
                                     <Label htmlFor="file" className="text-sm font-medium">
@@ -183,17 +184,21 @@ export default function SenderForm() {
                                     <Input
                                         id="file"
                                         type="file"
-                                        accept="image/*"
-                                        multiple
+                                        accept=".jpg,.jpeg,.png"
                                         onChange={handleFileChange}
                                     />
                                 </div>
-                                {files.length > 0 && (
-                                    <ul className="mt-2 text-sm text-gray-500">
-                                        {files.map((file, index) => (
-                                            <li key={index}>{file.name}</li>
-                                        ))}
-                                    </ul>
+                                {file && (
+                                    <div className="mt-2 text-sm text-gray-500 flex items-center">
+                                        <span>{file.name}</span>
+                                        <button
+                                            type="button"
+                                            onClick={handleFileRemove}
+                                            className="ml-2 text-red-500 mt-1.4"
+                                        >
+                                            X
+                                        </button>
+                                    </div>
                                 )}
                             </CardContent>
                         </Card>
@@ -231,4 +236,3 @@ function FileIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
         </svg>
     );
 }
-
