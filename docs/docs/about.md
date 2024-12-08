@@ -1,7 +1,7 @@
-# About Last Nine Months
+# About Nine Months
 
 ## Overview
-Last Nine Months is an innovative app designed to help families stay connected with their loved ones during their hibernation period. Our mission is to bridge the gap created by long-term space travel and ensure that no one feels isolated.
+Nine Months is an innovative app designed to help families stay connected with their loved ones during their hibernation period. Our mission is to bridge the gap created by long-term space travel and ensure that no one feels isolated.
 
 ## Technology Stack
 Our app is built using modern technologies to ensure a seamless and efficient user experience. Here is a brief overview of our technology stack:

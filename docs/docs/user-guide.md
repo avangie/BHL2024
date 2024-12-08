@@ -1,12 +1,12 @@
 # User Guide
 
 ## Introduction
-Welcome to the Last Nine Months user guide. This guide will help you understand how to use the app to stay connected with your loved ones during their hibernation period.
+Welcome to the Nine Months user guide. This guide will help you understand how to use the app to stay connected with your loved ones during their hibernation period.
 
 ## Getting Started
 ### Installation
 > This is a Work in Progress build of the app. 
-To install the Last Nine Months app, follow these steps:
+To install the Nine Months app, follow these steps:
 1. Clone our repository from [BHL2024 GitHub repo](https://github.com/avangie/BHL2024).
 2. Add .env file in backend directory with following content:
 > Change <your_openai_api_key> to your openai api key.
