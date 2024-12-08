@@ -82,12 +82,11 @@ def get_all_postcards_from_db() -> list[Postcard]:
     return [message_to_postcard(msg) for msg in messages]
 
 
-def add_postcard_to_db(postcard: Postcard, file: UploadFile = None):
+def add_postcard_to_db(postcard: Postcard, file: str = None):
     session = get_session()
 
     if file:
-        file_name = uuid4().hex
-        file_path = f"assets/{file_name}.{file.filename.split('.')[-1]}"
+        file_path = f"assets/{file}"
     else:
         file_path = None
     
