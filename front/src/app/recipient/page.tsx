@@ -1,5 +1,3 @@
-// /src/app/recipient/page.tsx
-
 import FlippablePostcard from '../../components/FlippablePostcard'
 
 interface PostcardData {
@@ -21,10 +19,12 @@ export default async function Home() {
         text: item.message,
     }))
 
-
     return (
-        <div className="flex items-center justify-center min-h-screen bg-background">
-            <FlippablePostcard postcards={postcards} />
+        <div className="flex items-center justify-center min-h-screen">
+            <div className="relative z-10 bg-black/40 backdrop-blur-xl p-8 rounded-lg border border-white/10 w-[45%]">
+                <FlippablePostcard postcards={postcards} />
+            </div>
         </div>
     )
 }
+

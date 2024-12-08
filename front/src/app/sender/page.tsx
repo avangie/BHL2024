@@ -16,7 +16,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import Header from "@/components/Header";
 
 const formSchema = z.object({
     authorField: z.string(),
@@ -97,117 +96,119 @@ export default function SenderForm() {
     }
 
     return (
-        <Form {...form}>
-            <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-8 max-w-3xl mx-auto py-10"
-            >
-                <Header />
-                <FormField
-                    control={form.control}
-                    name="authorField"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Author</FormLabel>
-                            <FormControl>
-                                <Input placeholder="" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+        <div className="min-h-screen flex items-center justify-center p-4">
+            <div className="w-full max-w-3xl bg-black/40 backdrop-blur-xl p-8 rounded-lg border border-white/10">
+                <Form {...form}>
+                    <form
+                        onSubmit={form.handleSubmit(onSubmit)}
+                        className="space-y-8"
+                    >
+                        <FormField
+                            control={form.control}
+                            name="authorField"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Author</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-                <FormField
-                    control={form.control}
-                    name="recipientField"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Recipient</FormLabel>
-                            <FormControl>
-                                <Input placeholder="" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                        <FormField
+                            control={form.control}
+                            name="recipientField"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Recipient</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-                <FormField
-                    control={form.control}
-                    name="titleField"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Title</FormLabel>
-                            <FormControl>
-                                <Input
-                                    placeholder="Type the title of your message here..."
-                                    {...field}
-                                />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                        <FormField
+                            control={form.control}
+                            name="titleField"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Title</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            placeholder="Type the title of your message here..."
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-                <FormField
-                    control={form.control}
-                    name="messageField"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Message</FormLabel>
-                            <FormControl>
-                                <Input
-                                    placeholder="Type your message here..."
-                                    {...field}
-                                />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                        <FormField
+                            control={form.control}
+                            name="messageField"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Message</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            placeholder="Type your message here..."
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-                <Card>
-                    <CardContent className="p-6 space-y-4">
-                        <div className="rounded-lg flex flex-col gap-1 p-6 items-center">
-                            <FileIcon className="w-12 h-12" />
-                            <span className="text-sm font-medium text-gray-500">
-                                Drag and drop a file or click to browse
-                            </span>
-                            <span className="text-xs text-gray-500">
-                                PDF, image, video, or audio
-                            </span>
-                        </div>
-                        <div className="space-y-2 text-sm">
-                            <Label htmlFor="file" className="text-sm font-medium">
-                                File
-                            </Label>
-                            <Input
-                                id="file"
-                                type="file"
-                                accept="image/*"
-                                multiple
-                                onChange={handleFileChange}
-                            />
-                        </div>
-                        {files.length > 0 && (
-                            <ul className="mt-2 text-sm text-gray-500">
-                                {files.map((file, index) => (
-                                    <li key={index}>{file.name}</li>
-                                ))}
-                            </ul>
+                        <Card>
+                            <CardContent className="p-6 space-y-4">
+                                <div className="rounded-lg flex flex-col gap-1 p-6 items-center">
+                                    <FileIcon className="w-12 h-12" />
+                                    <span className="text-sm font-medium text-gray-500">
+                                        Drag and drop a file or click to browse
+                                    </span>
+                                    <span className="text-xs text-gray-500">
+                                        PDF, image, video, or audio
+                                    </span>
+                                </div>
+                                <div className="space-y-2 text-sm">
+                                    <Label htmlFor="file" className="text-sm font-medium">
+                                        File
+                                    </Label>
+                                    <Input
+                                        id="file"
+                                        type="file"
+                                        accept="image/*"
+                                        multiple
+                                        onChange={handleFileChange}
+                                    />
+                                </div>
+                                {files.length > 0 && (
+                                    <ul className="mt-2 text-sm text-gray-500">
+                                        {files.map((file, index) => (
+                                            <li key={index}>{file.name}</li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </CardContent>
+                        </Card>
+
+                        <Button type="submit">Submit</Button>
+
+                        {popupMessage && (
+                            <div className="fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded shadow-lg">
+                                {popupMessage}
+                            </div>
                         )}
-                    </CardContent>
-                </Card>
-
-                <Button type="submit">Submit</Button>
-
-                {/* Popup */}
-                {popupMessage && (
-                    <div className="fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded shadow-lg">
-                        {popupMessage}
-                    </div>
-                )}
-            </form>
-        </Form>
+                    </form>
+                </Form>
+            </div>
+        </div>
     );
 }
 
@@ -230,3 +231,4 @@ function FileIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
         </svg>
     );
 }
+

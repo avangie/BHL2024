@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import UniverseBackground from "@/components/UniverseBackground";
+import Header from "@/components/Header";
 
 export const metadata: Metadata = {
-  title: "Last nine months",
+  title: "Nine months",
   description: "Time capsule from the past",
 };
 
@@ -13,9 +15,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="dark">
-        {children}
+      <body className="dark relative">
+        <UniverseBackground />
+        <Header />
+        <div className="relative z-10 pt-16">
+          {children}
+        </div>
       </body>
     </html>
   );
 }
+

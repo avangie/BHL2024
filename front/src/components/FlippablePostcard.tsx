@@ -3,7 +3,6 @@
 import React, { useState } from 'react'
 import Image from 'next/image'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import Header from './Header'
 
 interface PostcardData {
     frontImage: string
@@ -50,17 +49,16 @@ const FlippablePostcard: React.FC<FlippablePostcardProps> = ({ postcards }) => {
 
     return (
         <div className="flex flex-col items-center">
-            <Header />
             <div className="relative flex items-center mt-8">
                 <button
                     onClick={handlePrevious}
-                    className="absolute left-[-3rem] z-10 p-2 rounded-full shadow-md"
+                    className="absolute left-[-3rem] z-10 p-2 rounded-full shadow-md transition-transform duration-300 hover:scale-150"
                     aria-label="Previous postcard"
                 >
                     <ChevronLeft className="w-6 h-6" />
                 </button>
                 <div
-                    className="w-96 h-[36rem] [perspective:1000px] cursor-pointer border-2 border-primary rounded-md overflow-hidden"
+                    className="w-[30rem] h-[36rem] [perspective:1000px] cursor-pointer border-2 border-primary rounded-md overflow-hidden"
                     onClick={handleFlip}
                 >
                     <div
@@ -87,7 +85,7 @@ const FlippablePostcard: React.FC<FlippablePostcardProps> = ({ postcards }) => {
                 </div>
                 <button
                     onClick={handleNext}
-                    className="absolute right-[-3rem] z-10 p-2 rounded-full shadow-md"
+                    className="absolute right-[-3rem] z-10 p-2 rounded-full shadow-md transition-transform duration-300 hover:scale-150"
                     aria-label="Next postcard"
                 >
                     <ChevronRight className="w-6 h-6" />

@@ -2,10 +2,11 @@ import Link from "next/link";
 
 export default function Header() {
     return (
-        <div className="max-w-5xl w-full items-center justify-between flex">
-            <Link href="/" className="text-4xl font-bold text-muted-foreground mb-10">
-                Last nine months
+        <header className="fixed top-0 left-0 z-50 p-4">
+            <Link href="/" className="text-4xl font-bold text-primary hover:text-primary/80 transition-colors">
+                Nine months
             </Link>
-        </div>
+        </header>
     );
 }
+
