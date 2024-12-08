@@ -77,7 +77,7 @@ const FlippablePostcard: React.FC<FlippablePostcardProps> = ({ postcards }) => {
                         {/* Back side */}
                         <div className="absolute w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)] p-4 flex flex-col justify-between">
                             <div className="text-right text-sm font-semibold text-muted-foreground">{currentPostcard.author}</div>
-                            <div className="text-center text-muted-foreground">{currentPostcard.text}</div>
+                            <div className="text-center text-muted-foreground break-words">{currentPostcard.text}</div>
                             <div className="text-center text-sm text-muted-foreground">{currentPostcard.date}</div>
                         </div>
                     </div>

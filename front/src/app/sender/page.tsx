@@ -16,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea"
 
 const formSchema = z.object({
     authorField: z.string(),
@@ -158,10 +159,16 @@ export default function SenderForm() {
                                 <FormItem>
                                     <FormLabel>Message</FormLabel>
                                     <FormControl>
-                                        <Input
-                                            placeholder="Type your message here..."
-                                            {...field}
-                                        />
+                                        <div className="grid w-full gap-1.5">
+                                            {/* Bind the form field to Textarea */}
+                                            <Textarea
+                                                {...field} // Important to spread the field into Textarea
+                                                placeholder="Type your message here."
+                                                id="message"
+                                                rows={5} // Adjust the number of rows for better height
+                                                className="resize-none w-full p-2 border rounded-md text-sm"
+                                            />
+                                        </div>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
