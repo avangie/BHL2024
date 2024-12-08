@@ -1,0 +1,6 @@
+site_name: Last Nine Months Documentation
+nav:
+  - Home: index.md
+  - "User Guide": user-guide.md
+  - "About": about.md
+  - FAQ: faq.md
