@@ -1,4 +1,6 @@
 import FlippablePostcard from '../../components/FlippablePostcard'
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 interface PostcardData {
     frontImage: string
@@ -20,10 +22,13 @@ export default async function Home() {
     }))
 
     return (
-        <div className="flex items-center justify-center min-h-screen">
-            <div className="relative z-10 bg-black/40 backdrop-blur-xl p-8 rounded-lg border border-white/10">
+        <div className="flex flex-col items-center justify-center min-h-screen gap-4 ">
+            <div className="relative z-10 bg-black/40 backdrop-blur-xl p-8 rounded-lg border border-white/10 px-16">
                 <FlippablePostcard postcards={postcards} />
             </div>
+            <Button asChild className="relative z-10">
+                <Link href="/date-range">World's history</Link>
+            </Button>
         </div>
     )
 }
