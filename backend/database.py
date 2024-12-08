@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, LargeBinary
+from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import datetime
@@ -28,6 +28,14 @@ def get_all_messages(session) -> list[Message]:
         print(msg)
     return messages
 
+def delete_message(session, message_id):
+    message = session.query(Message).filter(Message.id == message_id).first()
+    if message:
+        session.delete(message)
+        session.commit()
+        print(f"Message with id {message_id} has been deleted.")
+    else:
+        print(f"Message with id {message_id} not found.")
 
 senders = [
     "John",
