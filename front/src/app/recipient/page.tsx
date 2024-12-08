@@ -1,25 +1,29 @@
-"use client";
+// /src/app/recipient/page.tsx
 
-import { Button } from "@/components/ui/button";
-import Header from "@/components/Header";
-import Postcard from "@/components/postcard/Postcard";
+import FlippablePostcard from '../../components/FlippablePostcard'
 
-export default function Page() {
+interface PostcardData {
+    frontImage: string
+    author: string
+    date: string
+    text: string
+}
+
+export default async function Home() {
+    const res = await fetch('http://127.0.0.1:8000/data')
+    const data = await res.json()
+    console.log("data", data)
+
+    const postcards: PostcardData[] = data.map((item: any) => ({
+        frontImage: item.image || '/placeholder.svg',
+        author: item.author,
+        date: item.time,
+        text: item.message,
+    }))
+
     return (
-        <main className="flex min-h-screen flex-col items-center p-4 bg-background md:px-24 gap-4">
-            <Header />
-
-            <Postcard />
-
-            <Button
-                size={"lg"}
-                onClick={() => {
-                    window.location.href = "/date-range";
-                }}
-                className="mt-8"
-            >
-                World's history
-            </Button>
-        </main>
-    );
+        <div className="flex items-center justify-center min-h-screen bg-background">
+            <FlippablePostcard postcards={postcards} />
+        </div>
+    )
 }
