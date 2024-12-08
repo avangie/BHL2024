@@ -20,3 +20,10 @@ npm build
 npm start
 ```
 4. Visit [localhost:3000](localhost:3000) and start using our app
+
+### Documentation
+To build the documentation run:
+```
+cd docs
+mkdocs serve
+```
